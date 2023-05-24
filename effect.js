@@ -1,4 +1,4 @@
-        'use strict';
+'use strict';
       let positiony=0;  
 positiony=window.pageYOffset;
 console.log(positiony);
@@ -1083,12 +1083,12 @@ function resizeCanvas () {
 
 window.addEventListener('mousemove', e => {
     pointers[0].moved = pointers[0].down;
-    pointers[0].dx = (e.offsetX - pointers[0].x) * 5;
-    pointers[0].dy = (e.offsetY - pointers[0].y) * 5;
-    pointers[0].x = e.offsetX-276;
-    pointers[0].y = e.offsetY-223;
+    pointers[0].dx = (e.clientX - pointers[0].x) * 5;
+    pointers[0].dy = (e.clientY - pointers[0].y) * 5;
+    pointers[0].x = e.clientX;
+    pointers[0].y = e.clientY;
+   
     
-    console.log("мышь "+e.offsetX+"--"+e.offsetY);
     
 });
 
