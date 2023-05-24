@@ -1,33 +1,3 @@
-<script>
- $('body').append("<canvas class='paints'></canvas>");
-
-  </script>
-
-<style>
-
-.tn-elem__5061097481667381917172 {
-   position:fixed;
-    
-}
-
-.paints {
-     position:fixed;
-    top:0;
-    left:0;
-height: 100vh;
- width: 100vw;
-}
-@media (max-width: 640px) {
-    .tn-elem__5061097481667381917172 {
-        display: none;
-    }
-}
-</style>
-
-<script>
-
-
-     
         'use strict';
       let positiony=0;  
 positiony=window.pageYOffset;
@@ -1235,5 +1205,3 @@ function getTextureScale (texture, width, height) {
     };
 
 }
-
-    </script>
