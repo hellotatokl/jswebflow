@@ -1157,8 +1157,8 @@ function HSVtoRGB (h, s, v) {
     t = v * (1 - (1 - f) * s);
 
     switch (i % 6) {
-        case 0: r = v, g = v, b = v; break;
-        case 1: r = v, g = v, b = v; break;
+        case 0: r = p, g = v, b = t; break;
+        case 1: r = i, g = p, b = q; break;
         case 2: r = v, g = v, b = v; break;
         case 3: r = v, g = v, b = v; break;
         case 4: r = v, g = v, b = v; break;
