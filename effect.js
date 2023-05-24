@@ -1,11 +1,8 @@
 'use strict';
-      let positiony=0;  
-positiony=window.pageYOffset;
-console.log(positiony);
-console.log(document.body.clientHeight);
+
 const canvas = document.getElementsByTagName('canvas')[0];
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = canvas.clientWidth;
+canvas.height = canvas.clientHeight;
 
 let config = {
     SIM_RESOLUTION: 128,
@@ -16,9 +13,10 @@ let config = {
     PRESSURE_ITERATIONS: 20,
     CURL: 30,
     SPLAT_RADIUS: 0.5,
-    SHADING: true,
+    SHADING: false,
     COLORFUL: true,
     PAUSED: false,
+    BACK_COLOR: { r: 0, g:0, b: 0 },
     TRANSPARENT: false,
     BLOOM: true,
     BLOOM_ITERATIONS: 8,
@@ -72,7 +70,7 @@ function getWebGLContext (canvas) {
         supportLinearFiltering = gl.getExtension('OES_texture_half_float_linear');
     }
 
-    gl.clearColor(0.0, 0.0, 0.0, 0.1);
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     const halfFloatTexType = isWebGL2 ? gl.HALF_FLOAT : halfFloat.HALF_FLOAT_OES;
     let formatRGBA;
@@ -199,7 +197,7 @@ function downloadURI (filename, uri) {
 }
 
 function isMobile () {
-   return /Mobi|Android/i.test(navigator.userAgent);
+    return /Mobi|Android/i.test(navigator.userAgent);
 }
 
 class GLProgram {
@@ -955,6 +953,8 @@ function render (target) {
 
     if (!config.TRANSPARENT) {
         colorProgram.bind();
+        let bc = config.BACK_COLOR;
+        gl.uniform4f(colorProgram.uniforms.color, bc.r / 255, bc.g / 255, bc.b / 255, 1);
         blit(target);
     }
 
@@ -1073,7 +1073,6 @@ function multipleSplats (amount) {
 }
 
 function resizeCanvas () {
-    return;
     if (canvas.width != canvas.clientWidth || canvas.height != canvas.clientHeight) {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
@@ -1081,43 +1080,34 @@ function resizeCanvas () {
     }
 }
 
-window.addEventListener('mousemove', e => {
+canvas.addEventListener('mousemove', e => {
     pointers[0].moved = pointers[0].down;
-    pointers[0].dx = (e.clientX - pointers[0].x) * 5;
-    pointers[0].dy = (e.clientY - pointers[0].y) * 5;
-    pointers[0].x = e.clientX;
-    pointers[0].y = e.clientY;
-   
-    
-    
+    pointers[0].dx = (e.offsetX - pointers[0].x) * 5.0;
+    pointers[0].dy = (e.offsetY - pointers[0].y) * 5.0;
+    pointers[0].x = e.offsetX;
+    pointers[0].y = e.offsetY;
 });
 
-window.addEventListener('touchmove', e => {
-    
- //  e.preventDefault();
+canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
     const touches = e.targetTouches;
     for (let i = 0; i < touches.length; i++) {
         let pointer = pointers[i];
         pointer.moved = pointer.down;
-        pointer.dx = (touches[i].clientX - pointer.x) * 8.0;
-        pointer.dy = (touches[i].clientY - pointer.y) * 8.0;
-        pointer.x = touches[i].clientX;
-        pointer.y = touches[i].clientY;
- 
-  
+        pointer.dx = (touches[i].pageX - pointer.x) * 8.0;
+        pointer.dy = (touches[i].pageY - pointer.y) * 8.0;
+        pointer.x = touches[i].pageX;
+        pointer.y = touches[i].pageY;
     }
-    
-},false);
+}, false);
 
-/*canvas.addEventListener('mousedown', () => {
+canvas.addEventListener('mouseover', () => {
     pointers[0].down = true;
     pointers[0].color = generateColor();
-});*/
+});
 
-
-
-window.addEventListener('touchstart', e => {
-//    e.preventDefault();
+canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
     const touches = e.targetTouches;
     for (let i = 0; i < touches.length; i++) {
         if (i >= pointers.length)
@@ -1125,16 +1115,14 @@ window.addEventListener('touchstart', e => {
 
         pointers[i].id = touches[i].identifier;
         pointers[i].down = true;
-        pointers[i].x = touches[i].clientX;
-        pointers[i].y = touches[i].clientY;
+        pointers[i].x = touches[i].pageX;
+        pointers[i].y = touches[i].pageY;
         pointers[i].color = generateColor();
     }
-    
 });
 
-window.addEventListener('mouseover', () => {
-    pointers[0].down = true;
-	pointers[0].color = generateColor();
+window.addEventListener('mouseout ', () => {
+    pointers[0].down = false;
 });
 
 window.addEventListener('touchend', e => {
@@ -1153,10 +1141,10 @@ window.addEventListener('keydown', e => {
 });
 
 function generateColor () {
-    let c = HSVtoRGB(Math.random(), 1.0, 1.0);
-    c.r *= 0.15;
-    c.g *= 0.15;
-    c.b *= 0.15;
+    let c = HSVtoRGB(0.1, 1.0, 1.0);
+    c.r *= 0.10;
+    c.g *= 0.10;
+    c.b *= 0;
     return c;
 }
 
@@ -1203,5 +1191,4 @@ function getTextureScale (texture, width, height) {
         x: width / texture.width,
         y: height / texture.height
     };
-
 }
