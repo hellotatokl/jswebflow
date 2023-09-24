@@ -3,31 +3,23 @@ document.addEventListener("DOMContentLoaded", function() {
     var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
     if (isSafari) {
-        // Если это Safari, добавляем атрибут controls
-        video.setAttribute("controls", "true");
-
-        // Устанавливаем постер видео
-        video.poster = currentPoster;
-
-        // Добавляем обработчик события 'ended' только для Safari
-        video.addEventListener("ended", function() {
-            video.style.display = "none"; // Скрываем видео
-        });
+      // Если это Safari, добавляем атрибут controls
+      video.setAttribute("controls", "true");
     } else {
-        // Добавляем обработчик события при наведении (hover in)
-        video.addEventListener("mouseenter", function() {
-            if (video.paused) {
-                video.play();
-            }
-        });
+      // Добавляем обработчик события при наведении (hover in)
+      video.addEventListener("mouseenter", function() {
+        if (video.paused) {
+          video.play();
+        }
+      });
 
-        // Добавляем обработчик события при уходе курсора (hover out)
-        video.addEventListener("mouseleave", function() {
-            if (!video.paused) {
-                video.pause();
-                video.load(); // Приостанавливаем видео и загружаем его снова, чтобы вернуться к началу
-            }
-        });
+      // Добавляем обработчик события при уходе курсора (hover out)
+      video.addEventListener("mouseleave", function() {
+        if (!video.paused) {
+          video.pause();
+         video.load(); // Приостанавливаем видео и загружаем его снова, чтобы вернуться к началу
+        }
+      });
     }
 
     // Определение текущей ширины экрана
@@ -41,50 +33,50 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Ваш код для ленивой загрузки видео и другие функции
     if ("IntersectionObserver" in window) {
-        var lazyVideoObserver = new IntersectionObserver(function(entries, observer) {
-            entries.forEach(function(video) {
-                if (video.isIntersecting) {
-                    for (var source in video.target.children) {
-                        var videoSource = video.target.children[source];
-                        if (typeof videoSource.tagName === "string" && videoSource.tagName === "SOURCE") {
-                            videoSource.src = videoSource.dataset.src;
-                        }
-                    }
-                    video.target.load();
-                    video.target.classList.remove("lazy-video");
-                    lazyVideoObserver.unobserve(video.target);
-                }
-            });
+      var lazyVideoObserver = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(function(video) {
+          if (video.isIntersecting) {
+            for (var source in video.target.children) {
+              var videoSource = video.target.children[source];
+              if (typeof videoSource.tagName === "string" && videoSource.tagName === "SOURCE") {
+                videoSource.src = videoSource.dataset.src;
+              }
+            }
+            video.target.load();
+            video.target.classList.remove("lazy-video");
+            lazyVideoObserver.unobserve(video.target);
+          }
         });
+      });
 
-        var lazyLoadVideos = [].slice.call(document.querySelectorAll("video.lazy-video"));
-        lazyLoadVideos.forEach(function(lazyVideo) {
-            lazyVideoObserver.observe(lazyVideo);
-        });
+      var lazyLoadVideos = [].slice.call(document.querySelectorAll("video.lazy-video"));
+      lazyLoadVideos.forEach(function(lazyVideo) {
+        lazyVideoObserver.observe(lazyVideo);
+      });
     }
 
     // Ваш скрипт для автоматического воспроизведения на мобильных
     if (/Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        const videos = document.querySelectorAll('video');
+      const videos = document.querySelectorAll('video');
 
-        const options = {
-            threshold: 0.5
-        };
+      const options = {
+        threshold: 0.5
+      };
 
-        const handleIntersection = (entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.play();
-                } else {
-                    entry.target.pause();
-                }
-            });
-        };
-
-        const observer = new IntersectionObserver(handleIntersection, options);
-
-        videos.forEach(video => {
-            observer.observe(video);
+      const handleIntersection = (entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.play();
+          } else {
+            entry.target.pause();
+          }
         });
+      };
+
+      const observer = new IntersectionObserver(handleIntersection, options);
+
+      videos.forEach(video => {
+        observer.observe(video);
+      });
     }
-});
+  });
